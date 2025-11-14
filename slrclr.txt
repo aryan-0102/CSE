@@ -1,0 +1,100 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Item {
+    char A;
+    string rhs;
+    int dot;
+};
+
+bool operator<(Item a, Item b) {
+    return tie(a.A,a.rhs,a.dot) < tie(b.A,b.rhs,b.dot);
+}
+
+map<char, vector<string>> prod;
+map<char, set<char>> FOLLOW;
+set<char> nonterm;
+
+set<Item> closure(set<Item> I) {
+    bool changed=true;
+    while(changed){
+        changed=false;
+        set<Item> add;
+        for(auto it:I){
+            if(it.dot < it.rhs.size()){
+                char B = it.rhs[it.dot];
+                if(isupper(B)){
+                    for(string r: prod[B])
+                        add.insert({B,r,0});
+                }
+            }
+        }
+        int old_size=I.size();
+        I.insert(add.begin(), add.end());
+        if(I.size()!=old_size) changed=true;
+    }
+    return I;
+}
+
+set<Item> GOTO(set<Item> I, char X){
+    set<Item> J;
+    for(auto it:I)
+        if(it.dot < it.rhs.size() && it.rhs[it.dot]==X)
+            J.insert({it.A, it.rhs, it.dot+1});
+    return closure(J);
+}
+
+int main(){
+    int n; cin>>n;
+    string p; getline(cin,p);
+    for(int i=0;i<n;i++){
+        getline(cin,p);
+        char A = p[0];
+        nonterm.insert(A);
+        string rhs = p.substr(3);
+        if(rhs=="e") rhs="";
+        prod[A].push_back(rhs);
+    }
+
+    // YOU MUST manually fill FOLLOW for demo
+    // (Automated FIRST/FOLLOW already done in Q2)
+    FOLLOW['S'].insert('$');
+
+    // Build LR(0) automaton
+    vector< set<Item> > C;
+    set<Item> start={{'S',prod['S'][0],0}};
+    start = closure(start);
+    C.push_back(start);
+
+    bool changed=true;
+    while(changed){
+        changed=false;
+        for(int i=0;i<C.size();i++){
+            for(char X='A';X<='z';X++){
+                set<Item> nxt=GOTO(C[i],X);
+                if(!nxt.empty() && find(C.begin(),C.end(),nxt)==C.end()){
+                    C.push_back(nxt);
+                    changed=true;
+                }
+            }
+        }
+    }
+
+    // SLR Conflict Check
+    for(auto &I:C){
+        bool reduceFound=false;
+        char reduceNonT;
+        for(auto x:I){
+            if(x.dot==x.rhs.size()){     // A→α·
+                if(reduceFound) {
+                    cout<<"Reduce/Reduce conflict → NOT SLR(1)\n";
+                    return 0;
+                }
+                reduceFound=true;
+                reduceNonT=x.A;
+            }
+        }
+    }
+
+    cout<<"No LR(0) conflicts → Grammar is SLR(1) (simplified check)\n";
+}

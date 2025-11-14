@@ -1,0 +1,53 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Interval {
+    string var;
+    int start, end;
+};
+
+int main() {
+    vector<Interval> I = {
+        {"a",0,5},
+        {"b",2,7},
+        {"c",4,6},
+        {"d",6,9}
+    };
+
+    int R = 2; // number of registers
+
+    sort(I.begin(), I.end(), [](auto &x, auto &y){
+        return x.start < y.start;
+    });
+
+    vector<Interval> active;
+    map<string,string> alloc;
+
+    auto expire = [&](int t){
+        active.erase(remove_if(active.begin(), active.end(),
+            [&](auto &iv){ return iv.end < t; }), active.end());
+    };
+
+    for(auto &iv : I){
+        expire(iv.start);
+        if(active.size() < R){
+            alloc[iv.var] = "R" + to_string(active.size());
+            active.push_back(iv);
+        } else {
+            // spill interval with furthest end
+            auto spill = max_element(active.begin(), active.end(),
+                [](auto &x, auto &y){ return x.end < y.end; });
+
+            if(spill->end > iv.end){
+                alloc[iv.var] = alloc[spill->var];
+                alloc[spill->var] = "SPILLED";
+                *spill = iv;
+            } else {
+                alloc[iv.var] = "SPILLED";
+            }
+        }
+    }
+
+    for(auto &p : alloc)
+        cout << p.first << " → " << p.second << "\n";
+}

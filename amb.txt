@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+map<char, vector<string>> prod;
+set<string> parses;
+
+void generate(string s, string target) {
+    if (s == target) {
+        parses.insert(s);
+        return;
+    }
+    if (s.size() > target.size()) return;
+
+    for (int i = 0; i < s.size(); i++) {
+        if (isupper(s[i])) {
+            char A = s[i];
+            for (string rhs : prod[A]) {
+                string nxt = s.substr(0, i) + rhs + s.substr(i + 1);
+                generate(nxt, target);
+            }
+            return; 
+        }
+    }
+}
+
+int main() {
+    int n; cin >> n;
+    string p, str; 
+    getline(cin, p);
+
+    for (int i = 0; i < n; i++) {
+        getline(cin, p);
+        char A = p[0];
+        int pos = p.find("->");
+        string rhs = p.substr(pos + 2);
+        stringstream ss(rhs);
+        string alt;
+        while (getline(ss, alt, '|')) {
+            alt.erase(remove_if(alt.begin(), alt.end(), ::isspace), alt.end());
+            prod[A].push_back(alt);
+        }
+    }
+
+    cout << "Enter string to test: ";
+    cin >> str;
+
+    generate("S", str);
+
+    if (parses.size() > 1)
+        cout << "Grammar is ambiguous for string: " << str << "\n";
+    else if (parses.size() == 1)
+        cout << "Grammar is NOT ambiguous for string: " << str << "\n";
+    else
+        cout << "String not derivable.\n";
+}

@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+map<char, vector<string>> prod;
+
+void leftmost(string s) {
+    cout << s << "\n";
+    for (int i = 0; i < s.size(); i++) {
+        if (isupper(s[i])) {
+            char NT = s[i];
+            for (auto &rhs : prod[NT]) {
+                string nxt = s.substr(0, i) + rhs + s.substr(i + 1);
+                leftmost(nxt);
+            }
+            return;
+        }
+    }
+}
+
+void rightmost(string s) {
+    cout << s << "\n";
+    for (int i = s.size() - 1; i >= 0; i--) {
+        if (isupper(s[i])) {
+            char NT = s[i];
+            for (auto &rhs : prod[NT]) {
+                string nxt = s.substr(0, i) + rhs + s.substr(i + 1);
+                rightmost(nxt);
+            }
+            return;
+        }
+    }
+}
+
+int main() {
+    int n; cin >> n;
+    string p, start = "S";
+    getline(cin, p);
+
+    for (int i = 0; i < n; i++) {
+        getline(cin, p);
+        char A = p[0];
+        int pos = p.find("->");
+        string rhs = p.substr(pos + 2);
+        stringstream ss(rhs);
+        string alt;
+        while (getline(ss, alt, '|')) {
+            alt.erase(remove_if(alt.begin(), alt.end(), ::isspace), alt.end());
+            prod[A].push_back(alt);
+        }
+    }
+
+    cout << "\nLeftmost derivations:\n";
+    leftmost(start);
+
+    cout << "\nRightmost derivations:\n";
+    rightmost(start);
+}

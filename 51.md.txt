@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    string src, line;
+    while (getline(cin, line)) src += line + '\n';
+
+    vector<string> tokens;
+
+    for (size_t i = 0; i < src.size();) {
+        char c = src[i];
+
+        if (isspace(c)) { i++; continue; }
+
+        if (isalpha(c) || c == '_') {
+            string id;
+            while (i < src.size() && (isalnum(src[i]) || src[i] == '_'))
+                id += src[i++];
+            tokens.push_back("IDENT(" + id + ")");
+        }
+        else if (isdigit(c)) {
+            string num;
+            while (i < src.size() && isdigit(src[i])) num += src[i++];
+            tokens.push_back("NUMBER(" + num + ")");
+        }
+        else {
+            if (c == '+') {
+                if (i + 1 < src.size() && src[i + 1] == '+') {
+                    tokens.push_back("INC");
+                    i += 2;
+                }
+                else if (i + 1 < src.size() && src[i + 1] == '=') {
+                    tokens.push_back("PLUS_ASSIGN");
+                    i += 2;
+                }
+                else {
+                    tokens.push_back("PLUS");
+                    i++;
+                }
+            }
+            else {
+                tokens.push_back(string(1, c));
+                i++;
+            }
+        }
+    }
+
+    for (auto &t : tokens) cout << t << "\n";
+}

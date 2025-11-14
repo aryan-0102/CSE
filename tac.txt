@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int prec(char c) {
+    if (c=='+' || c=='-') return 1;
+    if (c=='*' || c=='/') return 2;
+    return 0;
+}
+
+vector<string> tac;
+int tempCount = 1;
+
+string newTemp() {
+    return "t" + to_string(tempCount++);
+}
+
+vector<string> infixToPostfix(string exp) {
+    stack<char> st;
+    vector<string> out;
+    for (char c : exp) {
+        if (isalnum(c)) out.push_back(string(1,c));
+        else if (c=='(') st.push(c);
+        else if (c==')') {
+            while (!st.empty() && st.top()!='(') {
+                out.push_back(string(1,st.top()));
+                st.pop();
+            }
+            st.pop();
+        } else {
+            while (!st.empty() && prec(st.top()) >= prec(c)) {
+                out.push_back(string(1,st.top()));
+                st.pop();
+            }
+            st.push(c);
+        }
+    }
+    while (!st.empty()) {
+        out.push_back(string(1,st.top()));
+        st.pop();
+    }
+    return out;
+}
+
+string generateTAC(vector<string> postfix) {
+    stack<string> st;
+    for (auto &s : postfix) {
+        if (isalnum(s[0])) {
+            st.push(s);
+        } else {
+            string b = st.top(); st.pop();
+            string a = st.top(); st.pop();
+            string t = newTemp();
+            tac.push_back(t + " = " + a + " " + s + " " + b);
+            st.push(t);
+        }
+    }
+    return st.top();
+}
+
+int main() {
+    string exp;
+    cout << "Enter expression: ";
+    cin >> exp;
+
+    vector<string> postfix = infixToPostfix(exp);
+    generateTAC(postfix);
+
+    cout << "Three Address Code:\n";
+    for (string &s : tac) cout << s << "\n";
+}
