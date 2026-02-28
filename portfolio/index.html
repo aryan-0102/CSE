@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aryan Search</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top-bar">
+    <button id="avatarButton" class="avatar-button" type="button" aria-label="Open profile summary">A</button>
+    <section id="profilePanel" class="profile-panel hidden" aria-label="Profile summary">
+      <h2>Profile Summary</h2>
+      <p>
+        DevOps-focused engineer building cloud-native systems with automation-first thinking.
+        Passionate about AWS infrastructure, data workflows, and practical software delivery.
+      </p>
+      <p class="skills"><strong>Skills:</strong> DevOps, AWS, CI/CD, Docker, Python, Data</p>
+      <div class="profile-actions">
+        <button type="button" class="mini-button" data-shortcut="resume">View Resume</button>
+        <button type="button" class="mini-button" data-shortcut="contact">Contact Me</button>
+      </div>
+    </section>
+  </header>
+
+  <main class="page">
+    <section class="search-card" aria-label="Portfolio search">
+      <h1 class="logo">Aryan Search</h1>
+      <p class="subtitle">Search my projects, research, skills</p>
+
+      <input
+        type="text"
+        id="searchInput"
+        class="search-input"
+        aria-label="Search portfolio"
+        placeholder="Search portfolio"
+      >
+
+      <div class="button-row">
+        <button id="searchButton" class="retro-button" type="button">Search</button>
+        <button id="curiousButton" class="retro-button" type="button">I'm Feeling Curious</button>
+      </div>
+
+      <nav class="shortcut-nav" aria-label="Quick portfolio shortcuts">
+        <button type="button" class="shortcut-link" data-shortcut="resume">Resume</button>
+        <span>·</span>
+        <button type="button" class="shortcut-link" data-shortcut="contact">Contact</button>
+        <span>·</span>
+        <button type="button" class="shortcut-link" data-shortcut="projects">Projects</button>
+        <span>·</span>
+        <button type="button" class="shortcut-link" data-shortcut="aws">AWS</button>
+        <span>·</span>
+        <button type="button" class="shortcut-link" data-shortcut="devops">DevOps</button>
+      </nav>
+
+      <section id="results" class="results" aria-live="polite"></section>
+    </section>
+  </main>
+
+  <footer class="footer">© 2026 Aryan | Built with HTML, CSS, JS</footer>
+  <script src="js/script.js"></script>
+</body>
+</html>
